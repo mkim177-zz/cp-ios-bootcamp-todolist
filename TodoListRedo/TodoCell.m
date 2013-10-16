@@ -19,17 +19,15 @@
     return self;
 }
 
-- (void) setEditing:(BOOL)editing animated:(BOOL)animated
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated
 {
     [super setEditing:editing animated:animated];
     
     //UITextFields are disabled by default, enable if in editing mode
-    if (editing == NO)
-    {
+    if (editing == NO) {
         [self.todoTextField setEnabled:NO];
     }
-    else if (editing == YES)
-    {
+    else if (editing == YES) {
         [self.todoTextField setEnabled:YES];
     }
 }

@@ -36,6 +36,7 @@ static char *indexPathKey;
     [self.tableView registerNib:customNib forCellReuseIdentifier:@"TodoCell"];
     
     self.navigationItem.leftBarButtonItem = self.editButtonItem;
+    
     UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addTodoItem)];
     self.navigationItem.rightBarButtonItem = addButton;
 }
@@ -46,7 +47,7 @@ static char *indexPathKey;
     // Dispose of any resources that can be recreated.
 }
 
-- (void) addTodoItem
+- (void)addTodoItem
 {
     //add an empty row to the data source and refresh the view
     [self.todoListArray insertObject:@"" atIndex:0];
@@ -58,11 +59,9 @@ static char *indexPathKey;
     //find the newly created cell in visibleCells and call becomeFirstResponder
     NSArray *todoCellArray = [self.tableView visibleCells];
     
-    for (TodoCell *cell in todoCellArray)
-    {
+    for (TodoCell *cell in todoCellArray) {
         NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
-        if (indexPath.row == 0)
-        {
+        if (indexPath.row == 0) {
             [cell.todoTextField becomeFirstResponder];
             break;
         }
@@ -121,6 +120,21 @@ static char *indexPathKey;
     }
 }
 
+ // Override to support rearranging the table view.
+ - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
+ {
+     NSString *itemToMove = [self.todoListArray objectAtIndex:fromIndexPath.row];
+     [self.todoListArray removeObjectAtIndex:fromIndexPath.row];
+     [self.todoListArray insertObject:itemToMove atIndex:toIndexPath.row];
+ }
+
+ // Override to support conditional rearranging of the table view.
+ - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
+ {
+     // Return NO if you do not want the item to be re-orderable.
+     return YES;
+ }
+
 // implementing this UITextField function if user edits and hits "Done"
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
@@ -135,7 +149,7 @@ static char *indexPathKey;
 }
 
 // save the edited value in the todo item array
-- (void) textFieldUpdateTodoItemArray:(UITextField *) textField
+- (void)textFieldUpdateTodoItemArray:(UITextField *) textField
 {
     [textField resignFirstResponder];
     
