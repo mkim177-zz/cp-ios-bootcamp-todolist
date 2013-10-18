@@ -1,13 +1,12 @@
 //
 //  AppDelegate.h
-//  TodoListRedo
+//  TodoList
 //
-//  Created by mkim on 10/12/13.
-//  Copyright (c) 2013 mkim. All rights reserved.
+//  Created by Mark Kim on 10/17/13.
+//  Copyright (c) 2013 Mark Kim. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
-#import "TodoListViewController.h"
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 

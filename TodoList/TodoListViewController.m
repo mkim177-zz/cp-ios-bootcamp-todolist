@@ -11,7 +11,7 @@
 @interface TodoListViewController ()
 
 @property (nonatomic, retain) NSMutableArray *todoListArray;
-
+- (void) saveTodoListChanges;
 @end
 
 @implementation TodoListViewController
@@ -23,6 +23,13 @@ static char *indexPathKey;
     self = [super initWithStyle:style];
     if (self) {
         self.todoListArray = [[NSMutableArray alloc] init];
+        
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        NSArray *savedList = [defaults arrayForKey:@"MyTodoList"];
+        
+        if (savedList != nil) {
+            self.todoListArray = [savedList mutableCopy];
+        }
     }
     return self;
 }
@@ -120,20 +127,21 @@ static char *indexPathKey;
     }
 }
 
- // Override to support rearranging the table view.
- - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
- {
-     NSString *itemToMove = [self.todoListArray objectAtIndex:fromIndexPath.row];
-     [self.todoListArray removeObjectAtIndex:fromIndexPath.row];
-     [self.todoListArray insertObject:itemToMove atIndex:toIndexPath.row];
- }
+// Override to support rearranging the table view.
+- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath
+{
+    NSString *itemToMove = [self.todoListArray objectAtIndex:fromIndexPath.row];
+    [self.todoListArray removeObjectAtIndex:fromIndexPath.row];
+    [self.todoListArray insertObject:itemToMove atIndex:toIndexPath.row];
+    [self saveTodoListChanges];
+}
 
- // Override to support conditional rearranging of the table view.
- - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
- {
-     // Return NO if you do not want the item to be re-orderable.
-     return YES;
- }
+// Override to support conditional rearranging of the table view.
+- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    // Return NO if you do not want the item to be re-orderable.
+    return YES;
+}
 
 // implementing this UITextField function if user edits and hits "Done"
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
@@ -145,7 +153,7 @@ static char *indexPathKey;
 // implementing this UITextField function if user edits and taps on another cell
 - (void)textFieldDidEndEditing:(UITextField *)textField
 {
-    [self textFieldUpdateTodoItemArray:textField];    
+    [self textFieldUpdateTodoItemArray:textField];
 }
 
 // save the edited value in the todo item array
@@ -155,6 +163,15 @@ static char *indexPathKey;
     
     NSIndexPath *indexPath = objc_getAssociatedObject(textField, indexPathKey);
     [self.todoListArray replaceObjectAtIndex:indexPath.row withObject:textField.text];
+    
+    [self saveTodoListChanges];
+}
+
+//save the todolist to NSUserDefaults
+- (void)saveTodoListChanges
+{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setObject:self.todoListArray forKey:@"MyTodoList"];
 }
 
 #pragma mark - Table view delegate
